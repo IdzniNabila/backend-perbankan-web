@@ -1,0 +1,43 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Perbankan",
+        "description": "Dokumentasi Resmi Sistem Perbankan",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/nasabah": {
+            "get": {
+                "summary": "Cek Data Nasabah",
+                "operationId": "2ac68c0610cd7a6be2042722362995b8",
+                "responses": {
+                    "200": {
+                        "description": "Berhasil"
+                    }
+                }
+            }
+        },
+        "/api/mutasi": {
+            "get": {
+                "summary": "Lihat Riwayat Transaksi",
+                "operationId": "fd4d1839ebabff51adf896f2cd97920a",
+                "responses": {
+                    "200": {
+                        "description": "Sukses"
+                    }
+                }
+            }
+        },
+        "/api/statistik": {
+            "get": {
+                "summary": "Tampil Statistik",
+                "operationId": "07fc0e7336085be5182d7e4d9ba0604c",
+                "responses": {
+                    "200": {
+                        "description": "Sukses"
+                    }
+                }
+            }
+        }
+    }
+}
