@@ -1,0 +1,6 @@
+$kind: http-request
+name: Get All Nasabah
+method: GET
+url: '{{base_url}}/api/nasabah'
+description: Mengambil semua data nasabah
+order: 1000

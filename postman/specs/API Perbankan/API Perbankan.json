@@ -1,0 +1,219 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Perbankan",
+    "version": "1.0.0",
+    "description": "Dokumentasi Resmi Sistem Perbankan - Collection untuk mengelola data nasabah, mutasi transaksi, dan statistik."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000"
+    }
+  ],
+  "paths": {
+    "/api/mutasi": {
+      "get": {
+        "summary": "Get All Mutasi",
+        "responses": {},
+        "tags": [
+          "Mutasi-Transaksi"
+        ],
+        "description": "Mengambil semua riwayat mutasi transaksi (join dengan rekening dan jenis_transaksi)"
+      },
+      "post": {
+        "summary": "Create Mutasi",
+        "responses": {},
+        "tags": [
+          "Mutasi-Transaksi"
+        ],
+        "description": "Mencatat mutasi transaksi baru (setor/tarik uang). Nominal harus lebih dari 0.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "no_rekening": {
+                    "type": "string",
+                    "format": "utc-millisec"
+                  },
+                  "id_jenis_transaksi": {
+                    "type": "integer"
+                  },
+                  "nominal": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "example": {
+                "no_rekening": "1234567890",
+                "id_jenis_transaksi": 1,
+                "nominal": 500000
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mutasi/{id}": {
+      "put": {
+        "summary": "Update Mutasi",
+        "responses": {},
+        "tags": [
+          "Mutasi-Transaksi"
+        ],
+        "description": "Koreksi nominal transaksi berdasarkan ID. Nominal harus lebih dari 0.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nominal": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "example": {
+                "nominal": 750000
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "{{id}}"
+        }
+      ],
+      "delete": {
+        "summary": "Delete Mutasi",
+        "responses": {},
+        "tags": [
+          "Mutasi-Transaksi"
+        ],
+        "description": "Membatalkan dan menghapus transaksi berdasarkan ID"
+      }
+    },
+    "/api/nasabah": {
+      "get": {
+        "summary": "Get All Nasabah",
+        "responses": {},
+        "tags": [
+          "Nasabah"
+        ],
+        "description": "Mengambil semua data nasabah"
+      },
+      "post": {
+        "summary": "Create Nasabah",
+        "responses": {},
+        "tags": [
+          "Nasabah"
+        ],
+        "description": "Menambahkan data nasabah baru",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nik": {
+                    "type": "string",
+                    "format": "utc-millisec"
+                  },
+                  "nama_lengkap": {
+                    "type": "string"
+                  },
+                  "no_hp": {
+                    "type": "string",
+                    "format": "utc-millisec"
+                  }
+                }
+              },
+              "example": {
+                "nik": "1234567890123456",
+                "nama_lengkap": "John Doe",
+                "no_hp": "081234567890"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/nasabah/{id}": {
+      "get": {
+        "summary": "Get Nasabah by ID",
+        "responses": {},
+        "tags": [
+          "Nasabah"
+        ],
+        "description": "Mengambil data nasabah berdasarkan ID"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "{{id}}"
+        }
+      ],
+      "put": {
+        "summary": "Update Nasabah",
+        "responses": {},
+        "tags": [
+          "Nasabah"
+        ],
+        "description": "Mengupdate data nasabah berdasarkan ID",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nama_lengkap": {
+                    "type": "string"
+                  },
+                  "no_hp": {
+                    "type": "string",
+                    "format": "utc-millisec"
+                  }
+                }
+              },
+              "example": {
+                "nama_lengkap": "John Doe Updated",
+                "no_hp": "089876543210"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Nasabah",
+        "responses": {},
+        "tags": [
+          "Nasabah"
+        ],
+        "description": "Menghapus data nasabah berdasarkan ID"
+      }
+    },
+    "/api/statistik": {
+      "get": {
+        "summary": "Get Statistik",
+        "responses": {},
+        "tags": [
+          "Statistik"
+        ],
+        "description": "Menampilkan statistik transaksi: total transaksi bulan ini, nasabah paling aktif, dan nasabah dengan putaran uang terbesar"
+      }
+    }
+  }
+}

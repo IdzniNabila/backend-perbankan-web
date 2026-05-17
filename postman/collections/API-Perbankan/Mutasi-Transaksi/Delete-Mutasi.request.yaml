@@ -1,0 +1,6 @@
+$kind: http-request
+name: Delete Mutasi
+method: DELETE
+url: '{{base_url}}/api/mutasi/{{id}}'
+description: Membatalkan dan menghapus transaksi berdasarkan ID
+order: 4000

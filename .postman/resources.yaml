@@ -1,0 +1,7 @@
+# Use this workspace to collaborate
+workspace:
+  id: 17d9c4a1-bb66-4cdc-88fe-6512171befd0
+
+localResources:
+  specs:
+    - ..\postman\specs\API Perbankan\API Perbankan.json

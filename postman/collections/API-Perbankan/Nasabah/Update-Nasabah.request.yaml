@@ -1,0 +1,16 @@
+$kind: http-request
+name: Update Nasabah
+method: PUT
+url: '{{base_url}}/api/nasabah/{{id}}'
+description: Mengupdate data nasabah berdasarkan ID
+order: 4000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "nama_lengkap": "John Doe Updated",
+      "no_hp": "089876543210"
+    }

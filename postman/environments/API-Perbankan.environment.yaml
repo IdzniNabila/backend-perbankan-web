@@ -1,0 +1,10 @@
+name: API Perbankan - Local
+values:
+  - key: base_url
+    value: 'http://localhost:8000'
+    enabled: true
+    type: default
+  - key: id
+    value: '1'
+    enabled: true
+    type: default
