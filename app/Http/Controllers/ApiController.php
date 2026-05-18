@@ -220,9 +220,18 @@ use OpenApi\Attributes as OA;
 
 class ApiController extends BaseController
 {
+    // NASABAH
+
     public function getNasabah()
     {
         return DB::connection('mysql')->table('nasabah')->get();
+    }
+
+    public function getNasabahById($id)
+    {
+        $data = DB::connection('mysql')->table('nasabah')->where('id', $id)->first();
+        if (!$data) return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        return response()->json($data);
     }
 
     public function createNasabah(Request $request)
@@ -245,9 +254,231 @@ class ApiController extends BaseController
         return response()->json(['message' => 'Data Nasabah berhasil dihapus']);
     }
 
+
+    // REKENING
+
+    public function getRekening()
+    {
+        return DB::connection('mysql')->table('rekening')->get();
+    }
+
+    public function getRekeningByNoRekening($no_rekening)
+    {
+        $data = DB::connection('mysql')->table('rekening')->where('no_rekening', $no_rekening)->first();
+        if (!$data) return response()->json(['message' => 'Rekening tidak ditemukan'], 404);
+        return response()->json($data);
+    }
+
+    public function createRekening(Request $request)
+    {
+        $data = $request->only(['no_rekening', 'id_nasabah', 'id_jenis_rekening', 'id_cabang', 'saldo']);
+        DB::connection('mysql')->table('rekening')->insert($data);
+        return response()->json(['message' => 'Rekening berhasil dibuat'], 201);
+    }
+
+    public function updateRekening(Request $request, $no_rekening)
+    {
+        $data = $request->only(['id_jenis_rekening', 'id_cabang', 'saldo']);
+        DB::connection('mysql')->table('rekening')->where('no_rekening', $no_rekening)->update($data);
+        return response()->json(['message' => 'Rekening berhasil diupdate']);
+    }
+
+    public function deleteRekening($no_rekening)
+    {
+        DB::connection('mysql')->table('rekening')->where('no_rekening', $no_rekening)->delete();
+        return response()->json(['message' => 'Rekening berhasil dihapus']);
+    }
+
+    // JENIS TRANSAKSI
+
+    public function getJenisTransaksi()
+    {
+        return DB::connection('mysql')->table('jenis_transaksi')->get();
+    }
+
+    public function getJenisTransaksiById($id)
+    {
+        $data = DB::connection('mysql')->table('jenis_transaksi')->where('id', $id)->first();
+        if (!$data) return response()->json(['message' => 'Jenis transaksi tidak ditemukan'], 404);
+        return response()->json($data);
+    }
+
+    public function createJenisTransaksi(Request $request)
+    {
+        $data = $request->only(['nama_transaksi', 'tipe']);
+        $id = DB::connection('mysql')->table('jenis_transaksi')->insertGetId($data);
+        return response()->json(['id' => $id, 'message' => 'Jenis Transaksi berhasil ditambah'], 201);
+    }
+
+    public function updateJenisTransaksi(Request $request, $id)
+    {
+        $data = $request->only(['nama_transaksi', 'tipe']);
+        DB::connection('mysql')->table('jenis_transaksi')->where('id', $id)->update($data);
+        return response()->json(['message' => 'Jenis Transaksi berhasil diupdate']);
+    }
+
+    public function deleteJenisTransaksi($id)
+    {
+        DB::connection('mysql')->table('jenis_transaksi')->where('id', $id)->delete();
+        return response()->json(['message' => 'Jenis Transaksi berhasil dihapus']);
+    }
+
+
+    // CABANG BANK
+
+    public function getCabangBank()
+    {
+        return DB::connection('mysql')->table('cabang_bank')->get();
+    }
+
+    public function getCabangBankById($id)
+    {
+        $data = DB::connection('mysql')->table('cabang_bank')->where('id', $id)->first();
+        if (!$data) return response()->json(['message' => 'Cabang tidak ditemukan'], 404);
+        return response()->json($data);
+    }
+
+    public function createCabangBank(Request $request)
+    {
+        $data = $request->only(['nama_cabang', 'alamat']);
+        $id = DB::connection('mysql')->table('cabang_bank')->insertGetId($data);
+        return response()->json(['id' => $id, 'message' => 'Cabang Bank berhasil ditambah'], 201);
+    }
+
+    public function updateCabangBank(Request $request, $id)
+    {
+        $data = $request->only(['nama_cabang', 'alamat']);
+        DB::connection('mysql')->table('cabang_bank')->where('id', $id)->update($data);
+        return response()->json(['message' => 'Cabang Bank berhasil diupdate']);
+    }
+
+    public function deleteCabangBank($id)
+    {
+        DB::connection('mysql')->table('cabang_bank')->where('id', $id)->delete();
+        return response()->json(['message' => 'Cabang Bank berhasil dihapus']);
+    }
+
+
+    // JENIS REKENING
+
+    public function getJenisRekening()
+    {
+        return DB::connection('mysql')->table('jenis_rekening')->get();
+    }
+
+    public function getJenisRekeningById($id)
+    {
+        $data = DB::connection('mysql')->table('jenis_rekening')->where('id', $id)->first();
+        if (!$data) return response()->json(['message' => 'Jenis rekening tidak ditemukan'], 404);
+        return response()->json($data);
+    }
+
+    public function createJenisRekening(Request $request)
+    {
+        $data = $request->only(['nama_jenis', 'biaya_admin']);
+        $id = DB::connection('mysql')->table('jenis_rekening')->insertGetId($data);
+        return response()->json(['id' => $id, 'message' => 'Jenis Rekening berhasil ditambah'], 201);
+    }
+
+    public function updateJenisRekening(Request $request, $id)
+    {
+        $data = $request->only(['nama_jenis', 'biaya_admin']);
+        DB::connection('mysql')->table('jenis_rekening')->where('id', $id)->update($data);
+        return response()->json(['message' => 'Jenis Rekening berhasil diupdate']);
+    }
+
+    public function deleteJenisRekening($id)
+    {
+        DB::connection('mysql')->table('jenis_rekening')->where('id', $id)->delete();
+        return response()->json(['message' => 'Jenis Rekening berhasil dihapus']);
+    }
+
+
+    // TRANSAKSI PEMBAYARAN
+
+    public function getTransaksiPembayaran()
+    {
+        return DB::connection('mysql')->table('transaksi_pembayaran')->get();
+    }
+
+    public function getTransaksiPembayaranById($id)
+    {
+        $data = DB::connection('mysql')->table('transaksi_pembayaran')->where('id', $id)->first();
+        if (!$data) return response()->json(['message' => 'Transaksi pembayaran tidak ditemukan'], 404);
+        return response()->json($data);
+    }
+
+    public function createTransaksiPembayaran(Request $request)
+    {
+        $data = $request->only(['no_rekening', 'total_bayar', 'tanggal_bayar', 'status']);
+        $id = DB::connection('mysql')->table('transaksi_pembayaran')->insertGetId($data);
+        return response()->json(['id' => $id, 'message' => 'Transaksi Pembayaran berhasil dicatat'], 201);
+    }
+
+    public function updateTransaksiPembayaran(Request $request, $id)
+    {
+        $data = $request->only(['status']);
+        DB::connection('mysql')->table('transaksi_pembayaran')->where('id', $id)->update($data);
+        return response()->json(['message' => 'Status Transaksi Pembayaran diupdate']);
+    }
+
+    public function deleteTransaksiPembayaran($id)
+    {
+        DB::connection('mysql')->table('transaksi_pembayaran')->where('id', $id)->delete();
+        return response()->json(['message' => 'Transaksi Pembayaran berhasil dihapus']);
+    }
+
+    // DETAIL PEMBAYARAN
+    public function getDetailPembayaran()
+    {
+        return DB::connection('mysql')->table('detail_pembayaran')->get();
+    }
+
+    public function getDetailPembayaranById($id)
+    {
+        $data = DB::connection('mysql')->table('detail_pembayaran')->where('id', $id)->first();
+        if (!$data) return response()->json(['message' => 'Detail pembayaran tidak ditemukan'], 404);
+        return response()->json($data);
+    }
+
+    public function createDetailPembayaran(Request $request)
+    {
+        $data = $request->only(['id_transaksi', 'item_pembayaran', 'nominal']);
+        $id = DB::connection('mysql')->table('detail_pembayaran')->insertGetId($data);
+        return response()->json(['id' => $id, 'message' => 'Detail Pembayaran berhasil dicatat'], 201);
+    }
+
+    public function updateDetailPembayaran(Request $request, $id)
+    {
+        $data = $request->only(['item_pembayaran', 'nominal']);
+        DB::connection('mysql')->table('detail_pembayaran')->where('id', $id)->update($data);
+        return response()->json(['message' => 'Detail Pembayaran diupdate']);
+    }
+
+    public function deleteDetailPembayaran($id)
+    {
+        DB::connection('mysql')->table('detail_pembayaran')->where('id', $id)->delete();
+        return response()->json(['message' => 'Detail Pembayaran berhasil dihapus']);
+    }
+
+
+    // MUTASI
     public function getMutasi()
     {
         return DB::connection('mysql')->table('mutasi_transaksi')->get();
+    }
+
+    public function getMutasiById($id)
+    {
+        $data = DB::connection('mysql')->table('mutasi_transaksi')->where('id', $id)->first();
+        if (!$data) return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        return response()->json($data);
+    }
+
+    public function getMutasiByRekening($no_rekening)
+    {
+        $data = DB::connection('mysql')->table('mutasi_transaksi')->where('no_rekening', $no_rekening)->get();
+        return response()->json($data);
     }
 
     public function createMutasi(Request $request)
@@ -270,6 +501,8 @@ class ApiController extends BaseController
         return response()->json(['message' => 'Transaksi berhasil dihapus']);
     }
 
+
+    // STATISTIK
     public function getStatistik()
     {
         return DB::connection('mysql')->table('statistik')->get();
