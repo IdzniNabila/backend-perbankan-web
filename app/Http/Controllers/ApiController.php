@@ -49,7 +49,7 @@ use Exception;
 
 // REKENING
 #[OA\Get(
-    path: "/api/rekening", summary: "Get Semua Rekening Detail (Paging 10)", tags: ["Rekening"], 
+    path: "/api/rekening", summary: "Get Semua Rekening Detail ", tags: ["Rekening"], 
     parameters: [new OA\Parameter(name: "page", in: "query", required: false, schema: new OA\Schema(type: "integer"))],
     responses: [new OA\Response(response: 200, description: "Sukses")]
 )]
@@ -81,7 +81,7 @@ use Exception;
 )]
 
 // JENIS TRANSAKSI
-#[OA\Get(path: "/api/jenis-transaksi", summary: "Get Semua Jenis Transaksi (Paging 10)", tags: ["Jenis Transaksi"], responses: [new OA\Response(response: 200, description: "Sukses")])]
+#[OA\Get(path: "/api/jenis-transaksi", summary: "Get Semua Jenis Transaksi ", tags: ["Jenis Transaksi"], responses: [new OA\Response(response: 200, description: "Sukses")])]
 #[OA\Get(
     path: "/api/jenis-transaksi/{id}", summary: "Get Detail Jenis Transaksi", tags: ["Jenis Transaksi"],
     parameters: [new OA\Parameter(name: "id", in: "path", required: true, schema: new OA\Schema(type: "integer"))],
@@ -110,7 +110,7 @@ use Exception;
 
 
 // CABANG BANK
-#[OA\Get(path: "/api/cabang-bank", summary: "Get Semua Cabang Bank (Paging 10)", tags: ["Cabang Bank"], responses: [new OA\Response(response: 200, description: "Sukses")])]
+#[OA\Get(path: "/api/cabang-bank", summary: "Get Semua Cabang Bank ", tags: ["Cabang Bank"], responses: [new OA\Response(response: 200, description: "Sukses")])]
 #[OA\Get(
     path: "/api/cabang-bank/{id}", summary: "Get Detail Cabang", tags: ["Cabang Bank"],
     parameters: [new OA\Parameter(name: "id", in: "path", required: true, schema: new OA\Schema(type: "integer"))],
@@ -139,7 +139,7 @@ use Exception;
 
 
 // JENIS REKENING
-#[OA\Get(path: "/api/jenis-rekening", summary: "Get Semua Jenis Rekening (Paging 10)", tags: ["Jenis Rekening"], responses: [new OA\Response(response: 200, description: "Sukses")])]
+#[OA\Get(path: "/api/jenis-rekening", summary: "Get Semua Jenis Rekening ", tags: ["Jenis Rekening"], responses: [new OA\Response(response: 200, description: "Sukses")])]
 #[OA\Get(
     path: "/api/jenis-rekening/{id}", summary: "Get Detail Jenis Rekening", tags: ["Jenis Rekening"],
     parameters: [new OA\Parameter(name: "id", in: "path", required: true, schema: new OA\Schema(type: "integer"))],
@@ -168,7 +168,7 @@ use Exception;
 
 
 // TRANSAKSI PEMBAYARAN
-#[OA\Get(path: "/api/transaksi-pembayaran", summary: "Get Semua Transaksi Pembayaran Detail (Paging 10)", tags: ["Transaksi Pembayaran"], responses: [new OA\Response(response: 200, description: "Sukses")])]
+#[OA\Get(path: "/api/transaksi-pembayaran", summary: "Get Semua Transaksi Pembayaran Detail ", tags: ["Transaksi Pembayaran"], responses: [new OA\Response(response: 200, description: "Sukses")])]
 #[OA\Get(
     path: "/api/transaksi-pembayaran/{id}", summary: "Get Detail Transaksi Lengkap", tags: ["Transaksi Pembayaran"],
     parameters: [new OA\Parameter(name: "id", in: "path", required: true, schema: new OA\Schema(type: "integer"))],
@@ -200,7 +200,7 @@ use Exception;
 
 
 // DETAIL PEMBAYARAN
-#[OA\Get(path: "/api/detail-pembayaran", summary: "Get Semua Detail Pembayaran Gabungan (Paging 10)", tags: ["Detail Pembayaran"], responses: [new OA\Response(response: 200, description: "Sukses")])]
+#[OA\Get(path: "/api/detail-pembayaran", summary: "Get Semua Detail Pembayaran Gabungan ", tags: ["Detail Pembayaran"], responses: [new OA\Response(response: 200, description: "Sukses")])]
 #[OA\Get(
     path: "/api/detail-pembayaran/{id}", summary: "Get Spesifik Detail Pembayaran Lengkap", tags: ["Detail Pembayaran"],
     parameters: [new OA\Parameter(name: "id", in: "path", required: true, schema: new OA\Schema(type: "integer"))],
@@ -228,7 +228,7 @@ use Exception;
 )]
 
 // MUTASI
-#[OA\Get(path: "/api/mutasi", summary: "Get Semua Mutasi Gabungan (Paging 10)", tags: ["Mutasi"], responses: [new OA\Response(response: 200, description: "Sukses")])]
+#[OA\Get(path: "/api/mutasi", summary: "Get Semua Mutasi Gabungan ", tags: ["Mutasi"], responses: [new OA\Response(response: 200, description: "Sukses")])]
 #[OA\Get(
     path: "/api/mutasi/{id}", summary: "Get Detail Mutasi Lengkap", tags: ["Mutasi"],
     parameters: [new OA\Parameter(name: "id", in: "path", required: true, schema: new OA\Schema(type: "integer"))],
@@ -265,7 +265,7 @@ use Exception;
 
 
 // STATISTIK
-#[OA\Get(path: "/api/statistik", summary: "Get Semua Statistik (Paging 10)", tags: ["Statistik"], responses: [new OA\Response(response: 200, description: "Sukses")])]
+#[OA\Get(path: "/api/statistik", summary: "Get Semua Statistik ", tags: ["Statistik"], responses: [new OA\Response(response: 200, description: "Sukses")])]
 #[OA\Post(
     path: "/api/statistik", summary: "Create Statistik", tags: ["Statistik"],
     requestBody: new OA\RequestBody(required: true, content: [new OA\MediaType(mediaType: "application/json", schema: new OA\Schema(type: "object", properties: [
