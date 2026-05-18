@@ -13,6 +13,16 @@
                 ],
                 "summary": "Get Semua Nasabah",
                 "operationId": "2ac68c0610cd7a6be2042722362995b8",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Sukses"
@@ -144,8 +154,18 @@
                 "tags": [
                     "Rekening"
                 ],
-                "summary": "Get Semua Rekening",
+                "summary": "Get Semua Rekening Detail (Paging 10)",
                 "operationId": "7b1635f8765ad39440e54b1203fffb5f",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Sukses"
@@ -197,7 +217,7 @@
                 "tags": [
                     "Rekening"
                 ],
-                "summary": "Get Detail Rekening",
+                "summary": "Get Detail Rekening Lengkap",
                 "operationId": "4b48734f95d59850f8b6a86ffc88d8c0",
                 "parameters": [
                     {
@@ -286,7 +306,7 @@
                 "tags": [
                     "Jenis Transaksi"
                 ],
-                "summary": "Get Semua Jenis Transaksi",
+                "summary": "Get Semua Jenis Transaksi (Paging 10)",
                 "operationId": "8bdd39f2ae17b28c284d46c10c899e64",
                 "responses": {
                     "200": {
@@ -416,7 +436,7 @@
                 "tags": [
                     "Cabang Bank"
                 ],
-                "summary": "Get Semua Cabang Bank",
+                "summary": "Get Semua Cabang Bank (Paging 10)",
                 "operationId": "ae072cdc7d69b437e908e68d55d42186",
                 "responses": {
                     "200": {
@@ -546,7 +566,7 @@
                 "tags": [
                     "Jenis Rekening"
                 ],
-                "summary": "Get Semua Jenis Rekening",
+                "summary": "Get Semua Jenis Rekening (Paging 10)",
                 "operationId": "72f9ff48f8906bb3ef4df66d67599de9",
                 "responses": {
                     "200": {
@@ -676,7 +696,7 @@
                 "tags": [
                     "Transaksi Pembayaran"
                 ],
-                "summary": "Get Semua Transaksi Pembayaran",
+                "summary": "Get Semua Transaksi Pembayaran Detail (Paging 10)",
                 "operationId": "10a074a99682a2f339f9376a8ff5e477",
                 "responses": {
                     "200": {
@@ -702,12 +722,13 @@
                                     "total_bayar": {
                                         "type": "number"
                                     },
-                                    "tanggal_bayar": {
-                                        "type": "string",
-                                        "format": "date"
-                                    },
                                     "status": {
                                         "type": "string"
+                                    },
+                                    "tanggal_bayar": {
+                                        "description": "Format: YYYY-MM-DD HH:MM:SS (Opsional, kosong = otomatis saat ini)",
+                                        "type": "string",
+                                        "format": "date-time"
                                     }
                                 },
                                 "type": "object"
@@ -727,7 +748,7 @@
                 "tags": [
                     "Transaksi Pembayaran"
                 ],
-                "summary": "Get Detail Transaksi",
+                "summary": "Get Detail Transaksi Lengkap",
                 "operationId": "5844224def267d349e815602e04eb4b3",
                 "parameters": [
                     {
@@ -810,7 +831,7 @@
                 "tags": [
                     "Detail Pembayaran"
                 ],
-                "summary": "Get Semua Detail Pembayaran",
+                "summary": "Get Semua Detail Pembayaran Gabungan (Paging 10)",
                 "operationId": "a194025e6b7d0ad6652fa039fe39184a",
                 "responses": {
                     "200": {
@@ -857,7 +878,7 @@
                 "tags": [
                     "Detail Pembayaran"
                 ],
-                "summary": "Get Spesifik Detail Pembayaran",
+                "summary": "Get Spesifik Detail Pembayaran Lengkap",
                 "operationId": "e98f25bdde198cc58e3bda25fac86327",
                 "parameters": [
                     {
@@ -943,7 +964,7 @@
                 "tags": [
                     "Mutasi"
                 ],
-                "summary": "Get Semua Mutasi",
+                "summary": "Get Semua Mutasi Gabungan (Paging 10)",
                 "operationId": "fd4d1839ebabff51adf896f2cd97920a",
                 "responses": {
                     "200": {
@@ -971,6 +992,11 @@
                                     },
                                     "nominal": {
                                         "type": "number"
+                                    },
+                                    "tanggal_transaksi": {
+                                        "description": "Format: YYYY-MM-DD HH:MM:SS (Opsional, kosong = otomatis saat ini)",
+                                        "type": "string",
+                                        "format": "date-time"
                                     }
                                 },
                                 "type": "object"
@@ -990,7 +1016,7 @@
                 "tags": [
                     "Mutasi"
                 ],
-                "summary": "Get Detail Mutasi",
+                "summary": "Get Detail Mutasi Lengkap",
                 "operationId": "eed9c94e2ee3bc773f6fbe9911177380",
                 "parameters": [
                     {
@@ -1073,7 +1099,7 @@
                 "tags": [
                     "Mutasi"
                 ],
-                "summary": "Get Mutasi Berdasarkan Rekening",
+                "summary": "Get Mutasi Berdasarkan Nomor Rekening",
                 "operationId": "e1c69aca86474dfcdca7edd2873abbd0",
                 "parameters": [
                     {
@@ -1097,7 +1123,7 @@
                 "tags": [
                     "Statistik"
                 ],
-                "summary": "Get Semua Statistik",
+                "summary": "Get Semua Statistik (Paging 10)",
                 "operationId": "07fc0e7336085be5182d7e4d9ba0604c",
                 "responses": {
                     "200": {
