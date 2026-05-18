@@ -1,4 +1,4 @@
-{
+﻿{
     "openapi": "3.0.0",
     "info": {
         "title": "API Perbankan",
@@ -15,6 +15,62 @@
                         "description": "Berhasil"
                     }
                 }
+            },
+            "post": {
+                "summary": "Create Nasabah",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "nik": {"type": "string"},
+                                    "nama_lengkap": {"type": "string"},
+                                    "no_hp": {"type": "string"}
+                                },
+                                "required": ["nik", "nama_lengkap"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {"description": "Nasabah berhasil ditambah"}
+                }
+            }
+        },
+        "/api/nasabah/{id}": {
+            "put": {
+                "summary": "Update Nasabah",
+                "parameters": [
+                    {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "nama_lengkap": {"type": "string"},
+                                    "no_hp": {"type": "string"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {"description": "Data Nasabah berhasil diupdate"}
+                }
+            },
+            "delete": {
+                "summary": "Delete Nasabah",
+                "parameters": [
+                    {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+                ],
+                "responses": {
+                    "200": {"description": "Data Nasabah berhasil dihapus"}
+                }
             }
         },
         "/api/mutasi": {
@@ -26,6 +82,62 @@
                         "description": "Sukses"
                     }
                 }
+            },
+            "post": {
+                "summary": "Create Mutasi",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "no_rekening": {"type": "string"},
+                                    "id_jenis_transaksi": {"type": "integer"},
+                                    "nominal": {"type": "number"}
+                                },
+                                "required": ["no_rekening", "id_jenis_transaksi", "nominal"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {"description": "Transaksi berhasil dicatat"}
+                }
+            }
+        },
+        "/api/mutasi/{id}": {
+            "put": {
+                "summary": "Update Mutasi",
+                "parameters": [
+                    {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "nominal": {"type": "number"}
+                                },
+                                "required": ["nominal"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {"description": "Koreksi transaksi berhasil"}
+                }
+            },
+            "delete": {
+                "summary": "Delete Mutasi",
+                "parameters": [
+                    {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+                ],
+                "responses": {
+                    "200": {"description": "Transaksi berhasil dihapus"}
+                }
             }
         },
         "/api/statistik": {
@@ -36,6 +148,60 @@
                     "200": {
                         "description": "Sukses"
                     }
+                }
+            },
+            "post": {
+                "summary": "Create Statistik",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "nama": {"type": "string"},
+                                    "deskripsi": {"type": "string"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {"description": "Statistik berhasil dibuat"}
+                }
+            }
+        },
+        "/api/statistik/{id}": {
+            "put": {
+                "summary": "Update Statistik",
+                "parameters": [
+                    {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "nama": {"type": "string"},
+                                    "deskripsi": {"type": "string"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {"description": "Statistik berhasil diperbarui"}
+                }
+            },
+            "delete": {
+                "summary": "Delete Statistik",
+                "parameters": [
+                    {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+                ],
+                "responses": {
+                    "200": {"description": "Statistik berhasil dihapus"}
                 }
             }
         }
