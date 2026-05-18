@@ -748,37 +748,24 @@ class ApiController extends BaseController
     // STATISTIK
     public function getStatistik() {
         try {
-            $data = DB::connection('mysql')->table('statistik')->paginate(10);
-            return response()->json($data, 200);
-        } catch (Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
-        }
-    }
+            // Menghitung rekap langsung dari berbagai tabel
+            $total_nasabah = DB::connection('mysql')->table('nasabah')->count();
+            $total_rekening = DB::connection('mysql')->table('rekening')->count();
+            $total_uang_beredar = DB::connection('mysql')->table('rekening')->sum('saldo');
+            $total_transaksi = DB::connection('mysql')->table('mutasi_transaksi')->count();
 
-    public function createStatistik(Request $request) {
-        try {
-            $data = $request->only(['nama', 'deskripsi']);
-            $id = DB::connection('mysql')->table('statistik')->insertGetId($data);
-            return response()->json(['id' => $id, 'message' => 'Statistik berhasil dibuat'], 201);
-        } catch (Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
-        }
-    }
-
-    public function updateStatistik(Request $request, $id) {
-        try {
-            $data = $request->only(['nama', 'deskripsi']);
-            DB::connection('mysql')->table('statistik')->where('id', $id)->update($data);
-            return response()->json(['message' => 'Statistik berhasil diperbarui'], 200);
-        } catch (Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
-        }
-    }
-
-    public function deleteStatistik($id) {
-        try {
-            DB::connection('mysql')->table('statistik')->where('id', $id)->delete();
-            return response()->json(['message' => 'Statistik berhasil dihapus'], 200);
+            // Mengembalikan balasan JSON berupa data rangkuman
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'total_nasabah' => $total_nasabah,
+                    'total_rekening' => $total_rekening,
+                    'total_uang_beredar' => (float) $total_uang_beredar,
+                    'total_transaksi' => $total_transaksi,
+                    'waktu_diperbarui' => now()
+                ]
+            ], 200);
+            
         } catch (Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
