@@ -1,0 +1,43 @@
+AUTHENTICATION (AuthN)
+- Membuktikan identitas pengguna
+- "siapa Anda?"
+- Langkah pertama (terjadi lebih dulu)
+- kata sandi, pin, sidik jari, dll
+- memasukkan username dan pw saat login
+
+
+Otorisasi (AuthZ)
+- Memberikan izin atau hak akses
+- "Apa yang boleh anda akses/lakukan?'
+- terjadi setelah identitas berhasil di verifikasi
+- Role Based Access Control
+- admin bisa menghapus data, tetapi pengguna biasa hanya bisa membaca
+
+Autentikasi:
+Opsi 1:
+    Punya table user: username dan password
+
+Opsi 2:
+    punya autentikasi dari aplikasi terpisah
+
+
+
+Otorisasi (gunakan opsi 1 dan 2)
+Opsi 1:
+    Logika pemisahan role/peran berdasarkan table user
+        table: username, password, role
+                idzni, xxxxxxx, mahasiswa
+                nabila, xxxxxxx, dosen
+
+Opsi 2:
+    Library External
+    PHP Library yang support RBAC (contoh: Apache Casbin, atau cari referensi lain)
+
+Opsi 3:
+    External application
+
+
+
+membuat token:
+1. Postman: Authorization 
+2. Swagger bearer token: letakkan code json nya sebelum endpoint nasabah

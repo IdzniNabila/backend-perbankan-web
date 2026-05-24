@@ -6,6 +6,42 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login API",
+                "operationId": "5a06c8b0d112b4f21d7593e3a2b874db",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login berhasil"
+                    },
+                    "401": {
+                        "description": "Username atau password salah"
+                    }
+                },
+                "security": []
+            }
+        },
         "/api/nasabah": {
             "get": {
                 "tags": [
@@ -1229,6 +1265,10 @@
     },
     "tags": [
         {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
             "name": "Nasabah",
             "description": "Nasabah"
         },
@@ -1263,6 +1303,21 @@
         {
             "name": "Statistik",
             "description": "Statistik"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Enter your access token. Example: Bearer <token>",
+                "scheme": "bearer",
+                "bearerFormat": "API Token"
+            }
+        }
+    },
+    "security": [
+        {
+            "bearerAuth": []
         }
     ]
 }

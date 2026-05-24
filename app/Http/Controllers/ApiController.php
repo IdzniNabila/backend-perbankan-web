@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use OpenApi\Attributes as OA;
 use Exception;
 
@@ -12,6 +15,19 @@ use Exception;
     version: "1.0.0",
     title: "API Perbankan",
     description: "Dokumentasi Resmi Sistem Perbankan"
+)]
+
+#[OA\Post(
+    path: "/api/login", summary: "Login API", tags: ["Auth"],
+    requestBody: new OA\RequestBody(required: true, content: [new OA\MediaType(mediaType: "application/json", schema: new OA\Schema(type: "object", properties: [
+        new OA\Property(property: "username", type: "string"),
+        new OA\Property(property: "password", type: "string")
+    ]))]),
+    responses: [
+        new OA\Response(response: 200, description: "Login berhasil"),
+        new OA\Response(response: 401, description: "Username atau password salah")
+    ],
+    security: []
 )]
 
 // NASABAH
@@ -290,6 +306,37 @@ use Exception;
 
 class ApiController extends BaseController
 {
+
+    public function login(Request $request)
+    {
+        try {
+            $username = $request->input('username');
+            $password = $request->input('password');
+
+            if (!$username || !$password) {
+                return response()->json(['message' => 'Username dan password harus diisi'], 422);
+            }
+
+            $user = DB::connection('mysql')->table('api_users')->where('username', $username)->first();
+            if (!$user || !Hash::check($password, $user->password)) {
+                return response()->json(['message' => 'Username atau password salah'], 401);
+            }
+
+            $token = Str::random(80);
+            DB::connection('mysql')->table('api_users')->where('id', $user->id)->update([
+                'api_token' => $token,
+                'token_created_at' => now(),
+            ]);
+
+            return response()->json([
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+                'expires_at' => now()->addHours(24)->toDateTimeString(),
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        }
+    }
 
     // NASABAH
     public function getNasabah() {
@@ -748,24 +795,78 @@ class ApiController extends BaseController
     // STATISTIK
     public function getStatistik() {
         try {
-            // Menghitung rekap langsung dari berbagai tabel
-            $total_nasabah = DB::connection('mysql')->table('nasabah')->count();
-            $total_rekening = DB::connection('mysql')->table('rekening')->count();
-            $total_uang_beredar = DB::connection('mysql')->table('rekening')->sum('saldo');
-            $total_transaksi = DB::connection('mysql')->table('mutasi_transaksi')->count();
+            $connection = DB::connection('mysql');
 
-            // Mengembalikan balasan JSON berupa data rangkuman
+            $total_uang_masuk = $connection->table('mutasi_transaksi')
+                ->join('jenis_transaksi', 'mutasi_transaksi.id_jenis_transaksi', '=', 'jenis_transaksi.id')
+                ->where(function ($query) {
+                    $query->whereIn('jenis_transaksi.nama_transaksi', ['setor', 'transfer_masuk'])
+                          ->orWhereIn('jenis_transaksi.tipe', ['masuk', 'in']);
+                })
+                ->sum('mutasi_transaksi.nominal');
+
+            $total_uang_keluar = $connection->table('mutasi_transaksi')
+                ->join('jenis_transaksi', 'mutasi_transaksi.id_jenis_transaksi', '=', 'jenis_transaksi.id')
+                ->where(function ($query) {
+                    $query->whereIn('jenis_transaksi.nama_transaksi', ['tarik', 'transfer_keluar'])
+                          ->orWhereIn('jenis_transaksi.tipe', ['keluar', 'out']);
+                })
+                ->sum('mutasi_transaksi.nominal');
+
+            $total_transaksi = $connection->table('mutasi_transaksi')->count();
+            $rata_rata_nominal = $connection->table('mutasi_transaksi')->avg('nominal');
+            $total_nasabah = $connection->table('nasabah')->count();
+
+            $total_aset_bank = Schema::connection('mysql')->hasColumn('rekening', 'saldo_berjalan')
+                ? $connection->table('rekening')->sum(DB::raw('COALESCE(saldo_berjalan, saldo)'))
+                : $connection->table('rekening')->sum('saldo');
+
+            $tren_fitur_populer = $connection->table('mutasi_transaksi')
+                ->join('jenis_transaksi', 'mutasi_transaksi.id_jenis_transaksi', '=', 'jenis_transaksi.id')
+                ->select('mutasi_transaksi.id_jenis_transaksi', 'jenis_transaksi.nama_transaksi', 'jenis_transaksi.tipe', DB::raw('COUNT(*) as total_transaksi'))
+                ->groupBy('mutasi_transaksi.id_jenis_transaksi', 'jenis_transaksi.nama_transaksi', 'jenis_transaksi.tipe')
+                ->orderByDesc('total_transaksi')
+                ->get();
+
+            $nasabah_teraktif = $connection->table('mutasi_transaksi')
+                ->join('rekening', 'mutasi_transaksi.no_rekening', '=', 'rekening.no_rekening')
+                ->join('nasabah', 'rekening.id_nasabah', '=', 'nasabah.id')
+                ->select('mutasi_transaksi.no_rekening', 'nasabah.nama_lengkap as nama_nasabah', DB::raw('COUNT(*) as total_transaksi'))
+                ->groupBy('mutasi_transaksi.no_rekening', 'nasabah.nama_lengkap')
+                ->orderByDesc('total_transaksi')
+                ->limit(5)
+                ->get();
+
             return response()->json([
                 'status' => 'success',
                 'data' => [
-                    'total_nasabah' => $total_nasabah,
-                    'total_rekening' => $total_rekening,
-                    'total_uang_beredar' => (float) $total_uang_beredar,
-                    'total_transaksi' => $total_transaksi,
-                    'waktu_diperbarui' => now()
-                ]
+                    'ringkasan_utama' => [
+                        'total_nasabah_aktif' => $total_nasabah,
+                        'total_aset_dana_bank' => (float) $total_aset_bank,
+                        'total_akumulasi_transaksi' => $total_transaksi,
+                    ],
+                    'arus_kas_keseluruhan' => [
+                        'total_pemasukan_deposit' => (float) $total_uang_masuk,
+                        'total_pengeluaran_debit' => (float) $total_uang_keluar,
+                        'rata_rata_nominal_per_transaksi' => (float) $rata_rata_nominal,
+                    ],
+                    'popularitas_fitur_transaksi' => $tren_fitur_populer->map(function ($item) {
+                        return [
+                            'id_jenis_transaksi' => $item->id_jenis_transaksi,
+                            'nama_fitur' => $item->nama_transaksi,
+                            'total_penggunaan' => $item->total_transaksi,
+                        ];
+                    })->values(),
+                    'peringkat_nasabah_teraktif' => $nasabah_teraktif->map(function ($item) {
+                        return [
+                            'no_rekening' => $item->no_rekening,
+                            'nama_nasabah' => $item->nama_nasabah,
+                            'frekuensi_transaksi' => $item->total_transaksi,
+                        ];
+                    })->values(),
+                    'waktu_diperbarui' => now(),
+                ],
             ], 200);
-            
         } catch (Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }

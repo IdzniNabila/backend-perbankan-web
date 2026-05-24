@@ -3,7 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiController;
 
-Route::controller(ApiController::class)->group(function () {
+Route::post('/login', [ApiController::class, 'login']);
+
+Route::middleware(\App\Http\Middleware\ApiTokenAuth::class)
+    ->controller(ApiController::class)
+    ->group(function () {
     // NASABAH
     Route::get('/nasabah', 'getNasabah');
     Route::get('/nasabah/{id}', 'getNasabahById');

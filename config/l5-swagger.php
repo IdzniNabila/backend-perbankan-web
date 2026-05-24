@@ -208,6 +208,15 @@ return [
                         ],
                     ],
                 ],
+                */
+                // Bearer token (HTTP auth) - used by the API token implementation
+                'bearerAuth' => [
+                    'type' => 'http',
+                    'description' => 'Enter your access token. Example: Bearer <token>',
+                    'scheme' => 'bearer',
+                    'bearerFormat' => 'API Token',
+                ],
+                /*
                 'sanctum' => [ // Unique name of security
                     'type' => 'apiKey', // Valid values are "basic", "apiKey" or "oauth2".
                     'description' => 'Enter token in format (Bearer <token>)',
@@ -217,18 +226,10 @@ return [
                 */
             ],
             'security' => [
-                /*
-                 * Examples of Securities
-                 */
+                // Apply bearerAuth globally in the generated docs — you can still
+                // override or clear security per-operation in annotations.
                 [
-                    /*
-                    'oauth2_security_example' => [
-                        'read',
-                        'write'
-                    ],
-
-                    'passport' => []
-                    */
+                    'bearerAuth' => [],
                 ],
             ],
         ],
