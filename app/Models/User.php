@@ -11,10 +11,10 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     // Arahkan ke tabel sistem autentikasi bank kampus
-    protected $table = 'pengguna_api';
+    protected $table = 'pengguna';
     public $timestamps = false;
 
-    // Sesuaikan dengan kolom di database pengguna_api
+    // Sesuaikan dengan kolom di database pengguna
     protected $fillable = [
         'username',
         'password',

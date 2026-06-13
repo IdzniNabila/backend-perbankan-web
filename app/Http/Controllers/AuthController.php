@@ -49,7 +49,7 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        $user = DB::table('pengguna_api')->where('username', $request->username)->first();
+        $user = DB::table('pengguna')->where('username', $request->username)->first();
 
         // Validasi Kredensial
         if (!$user || !Hash::check($request->password, $user->password)) {
@@ -63,7 +63,7 @@ class AuthController extends Controller
         $tokenBaru = Str::random(60);
 
         // Update token di database
-        DB::table('pengguna_api')->where('id', $user->id)->update([
+        DB::table('pengguna')->where('id', $user->id)->update([
             'api_token' => $tokenBaru,
             'terakhir_masuk' => now()
         ]);
@@ -89,7 +89,7 @@ class AuthController extends Controller
     {
         $token = $request->bearerToken();
 
-        DB::table('pengguna_api')
+        DB::table('pengguna')
             ->where('api_token', $token)
             ->update(['api_token' => null]);
 

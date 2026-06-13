@@ -16,8 +16,8 @@ class ValidasiTokenApi
             return response()->json(['status' => 'Gagal', 'pesan' => 'Token autentikasi tidak ditemukan!'], 401);
         }
 
-        // Cek token ke tabel pengguna_api
-        $user = DB::table('pengguna_api')->where('api_token', $token)->first();
+        // Cek token ke tabel pengguna
+        $user = DB::table('pengguna')->where('api_token', $token)->first();
 
         if (!$user) {
             return response()->json(['status' => 'Gagal', 'pesan' => 'Token salah atau sudah tidak berlaku!'], 401);
