@@ -17,18 +17,20 @@ class TransaksiController extends Controller
 
         DB::beginTransaction();
         try {
-            // 1. Cari kategori transaksi (DEBIT/KREDIT)
             $jenis = DB::table('jenis_transaksi')->where('id', $request->jenis_transaksi_id)->first();
             
-            // 2. Insert ke riwayat transaksi
-            DB::table('transaksi')->insert([
+            $kodeRef = uniqid('TRX-');
+
+            // Insert ke riwayat transaksi
+            $transaksiId = DB::table('transaksi')->insertGetId([
                 'rekening_id' => $request->rekening_id,
                 'jenis_transaksi_id' => $request->jenis_transaksi_id,
                 'jumlah' => $request->jumlah,
-                'kode_referensi' => uniqid('TRX-')
+                'kode_referensi' => $kodeRef,
+                'tanggal_transaksi' => now()
             ]);
 
-            // 3. Update Saldo Rekening
+            // Update Saldo Rekening
             if ($jenis->kategori === 'DEBIT') {
                 DB::table('rekening')->where('id', $request->rekening_id)->decrement('saldo', $request->jumlah);
             } else {
@@ -36,7 +38,28 @@ class TransaksiController extends Controller
             }
 
             DB::commit();
-            return response()->json(['status' => 'Sukses', 'pesan' => 'Transaksi berhasil dicatat'], 201);
+
+            // Mengambil detail transaksi yang baru dibuat beserta data relasinya
+            $detailTransaksi = DB::table('transaksi')
+                ->join('rekening', 'transaksi.rekening_id', '=', 'rekening.id')
+                ->join('entitas', 'rekening.entitas_id', '=', 'entitas.id')
+                ->join('jenis_transaksi', 'transaksi.jenis_transaksi_id', '=', 'jenis_transaksi.id')
+                ->select(
+                    'transaksi.kode_referensi',
+                    'entitas.nama_entitas',
+                    'rekening.nomor_rekening',
+                    'jenis_transaksi.nama_jenis as jenis_transaksi',
+                    'transaksi.jumlah',
+                    'transaksi.tanggal_transaksi'
+                )
+                ->where('transaksi.id', $transaksiId)
+                ->first();
+
+            return response()->json([
+                'status' => 'Sukses', 
+                'pesan' => 'Transaksi berhasil dicatat',
+                'data' => $detailTransaksi
+            ], 201);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -44,10 +67,57 @@ class TransaksiController extends Controller
         }
     }
 
-    // Read Data Transaksional
+    // Read Data Transaksional: Riwayat Berdasarkan Rekening (Menampilkan Data Lengkap)
     public function riwayat($rekening_id)
     {
-        $riwayat = DB::table('transaksi')->where('rekening_id', $rekening_id)->get();
+        $riwayat = DB::table('transaksi')
+            ->join('rekening', 'transaksi.rekening_id', '=', 'rekening.id')
+            ->join('entitas', 'rekening.entitas_id', '=', 'entitas.id')
+            ->join('jenis_transaksi', 'transaksi.jenis_transaksi_id', '=', 'jenis_transaksi.id')
+            ->select(
+                'transaksi.id as transaksi_id',
+                'transaksi.tanggal_transaksi',
+                'transaksi.kode_referensi',
+                'entitas.nama_entitas',
+                'rekening.nomor_rekening',
+                'jenis_transaksi.nama_jenis as jenis_transaksi',
+                'jenis_transaksi.kategori',
+                'transaksi.jumlah'
+            )
+            ->where('transaksi.rekening_id', $rekening_id)
+            ->orderBy('transaksi.tanggal_transaksi', 'desc')
+            ->get();
+
         return response()->json(['status' => 'Sukses', 'data' => $riwayat], 200);
+    }
+
+    // Membaca Detail Satu Transaksi Berdasarkan ID (Primary Key)
+    public function show($id)
+    {
+        $transaksi = DB::table('transaksi')
+            ->join('rekening', 'transaksi.rekening_id', '=', 'rekening.id')
+            ->join('entitas', 'rekening.entitas_id', '=', 'entitas.id')
+            ->join('jenis_transaksi', 'transaksi.jenis_transaksi_id', '=', 'jenis_transaksi.id')
+            ->select(
+                'transaksi.id as transaksi_id',
+                'transaksi.tanggal_transaksi',
+                'transaksi.kode_referensi',
+                'entitas.nama_entitas',
+                'entitas.kategori as kategori_nasabah',
+                'rekening.nomor_rekening',
+                'jenis_transaksi.nama_jenis as jenis_transaksi',
+                'jenis_transaksi.kategori as mutasi',
+                'transaksi.jumlah'
+            )
+
+            ->where('transaksi.rekening_id', $rekening_id)
+            ->orderBy('transaksi.tanggal_transaksi', 'desc')
+            ->paginate(10);
+
+        if (!$transaksi) {
+            return response()->json(['status' => 'Gagal', 'pesan' => 'Data transaksi tidak ditemukan'], 404);
+        }
+
+        return response()->json(['status' => 'Sukses', 'data' => $transaksi], 200);
     }
 }
