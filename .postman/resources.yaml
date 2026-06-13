@@ -1,7 +1,13 @@
-# Use this workspace to collaborate
 workspace:
   id: 17d9c4a1-bb66-4cdc-88fe-6512171befd0
 
 localResources:
   specs:
-    - ..\postman\specs\API Perbankan\API Perbankan.json
+    - ..\storage\api-docs\api-docs.json
+    - ../storage/api-docs/api-docs.json
+
+# Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
+
+cloudResources:
+  specs:
+    ../storage/api-docs/api-docs.json: 4622577d-989e-4fb0-8eae-ecf66c4c81ea

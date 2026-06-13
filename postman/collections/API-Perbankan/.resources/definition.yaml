@@ -1,6 +1,0 @@
-$kind: collection
-name: API Perbankan
-description: Dokumentasi Resmi Sistem Perbankan - Collection untuk mengelola data nasabah, mutasi transaksi, dan statistik.
-variables:
-  - key: base_url
-    value: 'http://localhost:8000'

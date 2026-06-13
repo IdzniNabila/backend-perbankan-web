@@ -1,6 +1,0 @@
-$kind: http-request
-name: Get Statistik
-method: GET
-url: '{{base_url}}/api/statistik'
-description: 'Menampilkan statistik transaksi: total transaksi bulan ini, nasabah paling aktif, dan nasabah dengan putaran uang terbesar'
-order: 1000

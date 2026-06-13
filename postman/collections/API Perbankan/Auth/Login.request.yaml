@@ -1,0 +1,45 @@
+$kind: http-request
+name: Login
+method: POST
+url: '{{base_url}}/api/login'
+order: 1000
+auth:
+  type: noauth
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "username": "admin",
+      "password": "admin123"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test("Response is JSON", function () {
+          pm.response.to.be.json;
+      });
+
+      pm.test("Response has token", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData).to.have.any.keys("token", "access_token", "api_token");
+      });
+
+      // Simpan token ke environment variable
+      var jsonData = pm.response.json();
+      var token = jsonData.token || jsonData.access_token || jsonData.api_token;
+      if (token) {
+          pm.environment.set("api_token", token);
+          console.log("api_token berhasil disimpan:", token);
+      } else {
+          console.warn("Token tidak ditemukan dalam response.");
+      }

@@ -1,0 +1,50 @@
+$kind: http-request
+name: Tambah Entitas
+method: POST
+url: '{{base_url}}/api/master/entitas'
+order: 2000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{api_token}}'
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "nama": "Entitas Baru",
+      "kode": "ENT001",
+      "alamat": "Jl. Contoh No. 1",
+      "telepon": "08123456789"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 201", function () {
+          pm.response.to.have.status(201);
+      });
+
+      pm.test("Response is JSON", function () {
+          pm.response.to.be.json;
+      });
+
+      pm.test("Response has data object", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData).to.have.property("data");
+          pm.expect(jsonData.data).to.be.an("object");
+      });
+
+      pm.test("Response has success message", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData).to.have.any.keys("message", "status");
+      });
+
+      pm.test("Response time is less than 2000ms", function () {
+          pm.expect(pm.response.responseTime).to.be.below(2000);
+      });

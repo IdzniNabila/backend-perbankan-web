@@ -1,0 +1,41 @@
+$kind: http-request
+name: Riwayat Transaksi
+method: GET
+url: '{{base_url}}/api/transaksi/riwayat/{{rekening_id}}'
+order: 2000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{api_token}}'
+headers:
+  - key: Accept
+    value: application/json
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test("Response is JSON", function () {
+          pm.response.to.be.json;
+      });
+
+      pm.test("Response has transaction history", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData).to.have.property("data");
+          pm.expect(jsonData.data).to.be.an("array");
+      });
+
+      pm.test("Each transaction has required fields", function () {
+          var jsonData = pm.response.json();
+          if (jsonData.data.length > 0) {
+              pm.expect(jsonData.data[0]).to.have.any.keys("id", "rekening_id", "jumlah", "jenis_transaksi", "created_at");
+          }
+      });
+
+      pm.test("Response time is less than 2000ms", function () {
+          pm.expect(pm.response.responseTime).to.be.below(2000);
+      });

@@ -1,0 +1,78 @@
+$kind: collection
+name: API Perbankan
+description: |-
+  Koleksi API untuk sistem perbankan berbasis Laravel.
+  Mencakup autentikasi, data master entitas, transaksi, dan statistik sistem.
+variables:
+  - key: base_url
+    value: 'http://localhost:8000'
+    description: Base URL untuk server Laravel lokal
+  - key: rekening_id
+    value: '1'
+    description: ID rekening default untuk pengujian transaksi
+description: |-
+  Koleksi API untuk endpoint yang ditemukan dari routes/api.php dan controller Laravel.
+  Mencakup login, CRUD data master entitas, pembuatan dan riwayat transaksi, serta ringkasan statistik sistem.
+variables:
+  - key: base_url
+    value: 'http://localhost:8000'
+    description: Base URL untuk server Laravel lokal
+  - key: rekening_id
+    value: '1'
+    description: ID rekening default untuk pengujian transaksi
+  - key: jenis_transaksi_id
+    value: '1'
+    description: ID jenis transaksi default untuk pengujian transaksi
+  - key: api_token
+    value: ''
+    description: Token bearer hasil dari request Login
+description: |-
+  Koleksi API untuk endpoint yang ditemukan dari routes/api.php dan controller Laravel.
+  Mencakup login, CRUD data master entitas, pembuatan dan riwayat transaksi, serta ringkasan statistik sistem.
+variables:
+  - key: base_url
+    value: 'http://localhost:8000'
+    description: Base URL untuk server Laravel lokal
+  - key: rekening_id
+    value: '1'
+    description: ID rekening default untuk pengujian transaksi
+  - key: jenis_transaksi_id
+    value: '1'
+    description: ID jenis transaksi default untuk pengujian transaksi
+  - key: api_token
+    value: ''
+$kind: collection
+name: API Perbankan
+description: |-
+  Koleksi API untuk endpoint yang ditemukan dari routes/api.php dan controller Laravel.
+  Mencakup login, CRUD data master entitas, pembuatan dan riwayat transaksi, serta ringkasan statistik sistem.
+variables:
+  - key: base_url
+    value: 'http://localhost:8000'
+    description: Base URL untuk server Laravel lokal
+  - key: rekening_id
+    value: '1'
+    description: ID rekening default untuk pengujian transaksi
+  - key: jenis_transaksi_id
+    value: '1'
+    description: ID jenis transaksi default untuk pengujian transaksi
+  - key: api_token
+    value: ''
+$kind: collection
+name: API Perbankan
+description: |-
+  Koleksi API untuk endpoint yang ditemukan dari routes/api.php dan controller Laravel.
+  Mencakup login, data master entitas, pembuatan dan riwayat transaksi, serta ringkasan statistik sistem.
+variables:
+  - key: base_url
+    value: 'http://localhost:8000'
+    description: Base URL untuk server Laravel lokal
+  - key: rekening_id
+    value: '1'
+    description: ID rekening default untuk pengujian transaksi dan riwayat transaksi
+  - key: jenis_transaksi_id
+    value: '1'
+    description: ID jenis transaksi default untuk pengujian pembuatan transaksi
+  - key: api_token
+    value: ''
+    description: Token bearer hasil dari request Login

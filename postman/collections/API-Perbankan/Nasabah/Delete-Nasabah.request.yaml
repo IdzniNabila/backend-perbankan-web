@@ -1,6 +1,0 @@
-$kind: http-request
-name: Delete Nasabah
-method: DELETE
-url: '{{base_url}}/api/nasabah/{{id}}'
-description: Menghapus data nasabah berdasarkan ID
-order: 5000

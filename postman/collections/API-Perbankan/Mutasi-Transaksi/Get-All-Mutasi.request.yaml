@@ -1,6 +1,0 @@
-$kind: http-request
-name: Get All Mutasi
-method: GET
-url: '{{base_url}}/api/mutasi'
-description: Mengambil semua riwayat mutasi transaksi (join dengan rekening dan jenis_transaksi)
-order: 1000

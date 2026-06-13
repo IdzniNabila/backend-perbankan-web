@@ -1,0 +1,50 @@
+$kind: http-request
+name: Buat Transaksi
+method: POST
+url: '{{base_url}}/api/transaksi/buat'
+order: 1000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{api_token}}'
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "rekening_id": "{{rekening_id}}",
+      "jenis_transaksi": "kredit",
+      "jumlah": 500000,
+      "keterangan": "Setoran tunai"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 201", function () {
+          pm.response.to.have.status(201);
+      });
+
+      pm.test("Response is JSON", function () {
+          pm.response.to.be.json;
+      });
+
+      pm.test("Response has transaction data", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData).to.have.property("data");
+          pm.expect(jsonData.data).to.be.an("object");
+      });
+
+      pm.test("Transaction has required fields", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.data).to.have.any.keys("id", "rekening_id", "jumlah", "jenis_transaksi");
+      });
+
+      pm.test("Response time is less than 2000ms", function () {
+          pm.expect(pm.response.responseTime).to.be.below(2000);
+      });
