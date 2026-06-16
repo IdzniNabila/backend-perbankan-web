@@ -110,7 +110,7 @@ class TransaksiController extends Controller
                 'transaksi.jumlah'
             )
 
-            ->where('transaksi.rekening_id', $rekening_id)
+            ->where('transaksi.id', $id)
             ->orderBy('transaksi.tanggal_transaksi', 'desc')
             ->paginate(10);
 
