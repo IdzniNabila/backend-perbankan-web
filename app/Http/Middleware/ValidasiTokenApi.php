@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Middleware;
 
 use Closure;
@@ -13,17 +14,22 @@ class ValidasiTokenApi
         $token = $request->bearerToken();
 
         if (!$token) {
-            return response()->json(['status' => 'Gagal', 'pesan' => 'Token autentikasi tidak ditemukan!'], 401);
+            return response()->json([
+                'status' => 'Gagal',
+                'pesan'  => 'Token autentikasi tidak ditemukan!'
+            ], 401);
         }
 
-        // Cek token ke tabel pengguna
+        // FIX: Gunakan tabel 'pengguna' (sesuai database SQL yang ada)
         $user = DB::table('pengguna')->where('api_token', $token)->first();
 
         if (!$user) {
-            return response()->json(['status' => 'Gagal', 'pesan' => 'Token salah atau sudah tidak berlaku!'], 401);
+            return response()->json([
+                'status' => 'Gagal',
+                'pesan'  => 'Token salah atau sudah tidak berlaku!'
+            ], 401);
         }
 
-        // Jika lolos, teruskan request ke endpoint tujuan
         return $next($request);
     }
 }
