@@ -3,57 +3,96 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+use App\Services\AuthService;
+use App\Http\Requests\LoginRequest;
+use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    protected AuthService $authService;
+
+    public function __construct(AuthService $authService)
     {
-        $request->validate([
-            'username' => 'required',
-            'password' => 'required'
-        ]);
+        $this->authService = $authService;
+        $this->middleware('throttle:5,1')->only('login');
+    }
 
-        // FIX: Gunakan tabel 'pengguna' (sesuai database SQL yang ada)
-        $user = DB::table('pengguna')->where('username', $request->username)->first();
+    public function login(LoginRequest $request): JsonResponse
+    {
+        $result = $this->authService->login(
+            username: $request->validated('username'),
+            password: $request->validated('password'),
+            device_name: $request->validated('device_name', 'Web Browser'),
+            ip_address: $request->ip(),
+            user_agent: $request->userAgent(),
+            device_type: $request->validated('device_type', 'web')
+        );
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (!$result) {
             return response()->json([
-                'status' => 'Gagal',
-                'pesan'  => 'Username atau Password salah!'
+                'status' => 'error',
+                'message' => 'Invalid username or password',
             ], 401);
         }
 
-        // Generate token baru (60 karakter)
-        $tokenBaru = Str::random(60);
-
-        // Update token di database
-        DB::table('pengguna')->where('id', $user->id)->update([
-            'api_token'     => $tokenBaru,
-            'terakhir_masuk' => now()
-        ]);
-
         return response()->json([
-            'status' => 'Sukses',
-            'pesan'  => 'Autentikasi Berhasil',
-            'token'  => $tokenBaru
+            'status' => 'success',
+            'message' => 'Login successful',
+            'data' => $result,
         ], 200);
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
-        $token = $request->bearerToken();
+        try {
+            $success = $this->authService->logout(
+                user: $request->user(),
+                ip_address: $request->ip()
+            );
 
-        // FIX: Gunakan tabel 'pengguna' (konsisten)
-        DB::table('pengguna')
-            ->where('api_token', $token)
-            ->update(['api_token' => null]);
+            if ($success) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Logout successful',
+                ], 200);
+            }
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Logout failed',
+            ], 500);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Logout failed: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function verifyPin(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $pin = $request->input('pin');
+
+        if (!$pin || !preg_match('/^\d{6}$/', $pin)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'PIN must be exactly 6 digits',
+            ], 422);
+        }
+
+        if ($this->authService->verifyPin($user, $pin)) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'PIN verified',
+                'verified' => true,
+            ], 200);
+        }
 
         return response()->json([
-            'status' => 'Sukses',
-            'pesan'  => 'Berhasil logout, token telah dinonaktifkan.'
-        ], 200);
+            'status' => 'error',
+            'message' => 'Invalid PIN',
+            'verified' => false,
+        ], 401);
     }
 }

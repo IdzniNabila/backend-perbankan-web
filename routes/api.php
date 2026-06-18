@@ -1,32 +1,58 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DataMasterController;
-use App\Http\Controllers\TransaksiController;
-use App\Http\Controllers\StatistikController;
+use App\Http\Controllers\TransferController;
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\TransactionController;
 
-// 1. Endpoint Public: Login (throttle 5 request per menit)
-Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+Route::prefix('v1')->group(function () {
+    Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+    Route::post('/auth/verify-pin', [AuthController::class, 'verifyPin'])->middleware('throttle:10,1');
 
-// 2. Endpoint Protected: Menggunakan Middleware Validasi Token
-Route::middleware([\App\Http\Middleware\ValidasiTokenApi::class])->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::post('/auth/logout', [AuthController::class, 'logout']);
 
-    // Auth: Logout
-    Route::post('/logout', [AuthController::class, 'logout']);
+        Route::prefix('transfer')->group(function () {
+            Route::post('/process', [TransferController::class, 'transfer'])->middleware('throttle:20,1');
+            Route::post('/validate', [TransferController::class, 'validateTransfer']);
+            Route::post('/quote', [TransferController::class, 'getTransferQuote']);
+        });
 
-    // CRUD Data Master (Tabel Entitas)
-    Route::get('/master/entitas',           [DataMasterController::class, 'index']);
-    Route::post('/master/entitas',          [DataMasterController::class, 'store']);
-    Route::get('/master/entitas/{id}',      [DataMasterController::class, 'show']);
-    Route::put('/master/entitas/{id}',      [DataMasterController::class, 'update']);
-    Route::delete('/master/entitas/{id}',   [DataMasterController::class, 'destroy']);
+        Route::prefix('accounts')->group(function () {
+            Route::get('/', [AccountController::class, 'index']);
+            Route::get('/{account_id}', [AccountController::class, 'show']);
+            Route::get('/{account_id}/mutasi', [AccountController::class, 'mutasi']);
+            Route::post('/', [AccountController::class, 'store']);
+        });
 
-    // CRUD Data Transaksional
-    Route::post('/transaksi/buat',                          [TransaksiController::class, 'buatTransaksi']);
-    Route::get('/transaksi/riwayat/{rekening_id}',          [TransaksiController::class, 'riwayat']);
-    Route::get('/transaksi/{id}',                           [TransaksiController::class, 'show']);
+        Route::prefix('transactions')->group(function () {
+            Route::get('/', [TransactionController::class, 'index']);
+            Route::get('/statistics', [TransactionController::class, 'getStatistics']);
+            Route::get('/audit-log', [TransactionController::class, 'getAuditLog']);
+            Route::get('/activity-report', [TransactionController::class, 'getActivityReport']);
+        });
+    });
+});
 
-    // Statistik
-    Route::get('/statistik/ringkasan', [StatistikController::class, 'ringkasanSistem']);
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return response()->json([
+        'status' => 'success',
+        'data' => [
+            'id' => $request->user()->id,
+            'username' => $request->user()->username,
+            'email' => $request->user()->email,
+            'nama_lengkap' => $request->user()->nama_lengkap,
+            'status' => $request->user()->status,
+        ],
+    ]);
+});
+
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'success',
+        'message' => 'API is running',
+        'timestamp' => now()->toIso8601String(),
+    ]);
 });
