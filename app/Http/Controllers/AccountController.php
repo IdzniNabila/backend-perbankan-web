@@ -22,7 +22,10 @@ class AccountController extends Controller
         $accounts = Rekening::whereHas('nasabah', function ($q) use ($user) {
             $q->where('user_id', $user->id);
         })
-            ->with('mutasiTerbaru:10')
+            // FIX: ":10" di sini diparsing Eloquent sebagai daftar kolom yang akan
+            // di-select (mis. with('relasi:kolom1,kolom2')), bukan sebagai limit.
+            // Relasi mutasiTerbaru() sendiri sudah membatasi 10 baris secara default.
+            ->with('mutasiTerbaru')
             ->orderBy('created_at', 'desc')
             ->get();
 

@@ -13,7 +13,11 @@ return new class extends Migration
     {
         Schema::create('personal_access_tokens', function (Blueprint $table) {
             $table->id();
-            $table->morphs('tokenable');
+            // FIX: gunakan uuidMorphs, bukan morphs(). Tabel `pengguna` (User model)
+            // memakai primary key UUID (string), sedangkan morphs() default membuat
+            // kolom tokenable_id bertipe unsignedBigInteger sehingga tidak akan pernah
+            // cocok dengan id pengguna -> token tidak akan pernah tervalidasi.
+            $table->uuidMorphs('tokenable');
             $table->text('name');
             $table->string('token', 64)->unique();
             $table->text('abilities')->nullable();

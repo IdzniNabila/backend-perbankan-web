@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::dropIfExists('job_batches');
         Schema::dropIfExists('jobs');
         Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('personal_access_tokens');
+        // FIX: jangan hapus 'personal_access_tokens' — tabel ini dipakai Laravel Sanctum
+        // untuk menyimpan token login (HasApiTokens::createToken()). Jika tabel ini
+        // dihapus, proses login akan selalu gagal dengan error "table doesn't exist".
         Schema::dropIfExists('sessions');
         Schema::dropIfExists('users');
     }
