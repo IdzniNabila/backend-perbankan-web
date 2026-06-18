@@ -26,8 +26,8 @@ class DatabaseSeeder extends Seeder
     {
         // Password & PIN demo yang sama untuk semua nasabah, supaya mudah dites:
         // password: password123 | PIN transaksi: 123456
-        $password = Hash::make('password123');
-        $pin = Hash::make('123456');
+        $password = Hash::make('kudaterbang');
+        $pin = Hash::make('230406');
 
         $mahasiswa = [
             ['username' => 'mhs_001', 'nama' => 'Idzni', 'nim' => '12050111', 'saldo' => 150000],
